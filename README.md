@@ -1,14 +1,12 @@
 # ME46060 - Engineering Optimisation: Concepts and Applications
 
-Helloey, here is my (Sahir) little directory for completing the assignments of TU Delft's [**ME46060 - Engineering Optimisation: Concepts and Applications**](https://www.studiegids.tudelft.nl/a101_displayCourse.do?course_id=60837) course - offered by TU Delft's Faculty of Mechanical, Martime, and Material Science Faculty (3mE), during the 2023-2024 academic year.
+Helloey, here is a little directory for completing the assignments of TU Delft's [**ME46060 - Engineering Optimisation: Concepts and Applications**](https://www.studiegids.tudelft.nl/a101_displayCourse.do?course_id=60837) course - offered by TU Delft's Faculty of Mechanical, Martime, and Material Science Faculty (3mE), during the 2023-2024 academic year.
 
 ## Repository Collaborators
 
-- **Sahir Sujahudeen**, working on his aerodynamics masters at the TU Delft
-  - [Email](m.s.sujahudeen@student.tudelft.nl)
+- **Sahir Sujahudeen**, working on the Aerodynamics masters at the TU Delft's Aerospace Faculty. [Email Sahir](m.s.sujahudeen@student.tudelft.nl)
 
-- **Niek Meijering**, working on his space engineering masters at the TU Delft.
-  - [Email](N.Meijering@student.tudelft.nl)
+- **Niek Meijering**, working on the Space Engineering masters at the TU Delft's Aerospace Faculty. [Email Niek](N.Meijering@student.tudelft.nl)
 
 > Shoot us an email if you wanna contribute to the contents of this repository  :) 
 
@@ -20,12 +18,12 @@ This course is *primarily* graded on a final assignment, with possible bonuses v
 ## Exercise Progress
 Here's what we've implemented and finished so far for the exercises!
 
-| Exercise Number | Description | Status |
+| Exercise | Description | Status |
 | ----------- | ----------- | ----------- |
 | 1 | Study of spring analysis model. Formulation of spring optimization model. | *Done* |
 | 2 | Study the behavior of model functions, and learn how to recognize monotonicity, (non-)convexity and (non-)linearity. Identify properties of optimization problems including dominance, activity, well boundedness, and convexity. | *Done* |
-| 3 | Understand the basic concept of line searches in more dimensional problems. Learn how to use MATLAB line search algorithm `fminbnd` and how to set optimization options. Investigate the influence of convergence parameters. | ***In Progress*** |
-| 4 | Solution of an unconstrained problem by means of a self made steepest descent algorithm using the Matlab line search algorithm fminbnd. Visualization of the optimization process. Learn how to use Matlab algorithm `fminunc` to solve unconstrained problems. | ***In Progress*** |
+| 3 | Understand the basic concept of line searches in more dimensional problems. Learn how to use MATLAB line search algorithm `fminbnd` and how to set optimization options. InvesXtigate the influence of convergence parameters. | ***In Progress*** |
+| 4 | Solution of an unconstrained problem by means of a self made steepest descent algorithm using the Matlab line search algorithm fminbnd. Visualization of the optimization process. Learn how to use MATLAB algorithm `fminunc` to solve unconstrained problems. | ***In Progress*** |
 | 5 | *To be filled* | Not started |
 | 6 | *To be filled* | Not started |
 | 7 | *To be filled* | Not started |
