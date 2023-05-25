@@ -4,9 +4,9 @@ Helloey, here is a little directory for completing the assignments of TU Delft's
 
 ## Repository Collaborators
 
-- **Sahir Sujahudeen**, working on the Aerodynamics masters at the TU Delft's Aerospace Faculty. [Email Sahir](m.s.sujahudeen@student.tudelft.nl)
+- **Sahir Sujahudeen**, working on the Aerodynamics masters at the TU Delft's Aerospace Faculty. [Email Sahir](mailto:m.s.sujahudeen@student.tudelft.nl)
 
-- **Niek Meijering**, working on the Space Engineering masters at the TU Delft's Aerospace Faculty. [Email Niek](N.Meijering@student.tudelft.nl)
+- **Niek Meijering**, working on the Space Engineering masters at the TU Delft's Aerospace Faculty. [Email Niek](mailto:N.Meijering@student.tudelft.nl)
 
 > Shoot us an email if you wanna contribute to the contents of this repository  :) 
 
