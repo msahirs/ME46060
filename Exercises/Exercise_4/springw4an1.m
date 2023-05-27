@@ -73,12 +73,9 @@ while again >= 1,
 	dfdx1 = (fx1plush - fx)/hi;
 	dfdx2 = (fx2plush - fx)/hi;
 	 % Gradient vector:
-  	df = [dfdx1 dfdx2] / sqrt(dfdx1^2 + dfdx2^2);
+  	df = [dfdx1 dfdx2];
 	% Steepest descent search direction:
-    
-    scale_fac = 0.002;
-
-	sq = -df * scale_fac;
+	sq = -df;
    sq
    
 	% Setting of options:
@@ -86,7 +83,7 @@ while again >= 1,
 
 	%Line search (note the lower and upper bound of alfhaq):
    [alphaq,fval,exitflag] = ...
-           fminbnd('springobjw4',0,5.0,[options],xq,sq,ktarget,frtarget,w);
+           fminbnd('springobjw4',0,1.0,[options],xq,sq,ktarget,frtarget,w);
 
 	% Optimization results:
 	alphaq         % step size
