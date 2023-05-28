@@ -73,13 +73,10 @@ while again >= 1,
 	dfdx1 = (fx1plush - fx)/hi;
 	dfdx2 = (fx2plush - fx)/hi;
 	 % Gradient vector:
-  	df = [dfdx1 dfdx2] / sqrt(dfdx1^2 + dfdx2^2);
+  	df = [dfdx1 dfdx2];
 	% Steepest descent search direction:
-    
-    scale_fac = 0.002;
-
-	sq = -df * scale_fac;
-   sq
+	sq = -df;
+    sq
    
 	% Setting of options:
 	options = optimset('tolx',1.0e-8,'MaxFunEvals',50);

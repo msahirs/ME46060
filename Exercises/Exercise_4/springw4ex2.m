@@ -36,7 +36,7 @@ end
 cc = [0.01 0.02 0.05];
 contour(D, d, fobj,[cc 10*cc 100*cc 1000*cc 10000*cc 100000*cc 1000000*cc])
 xlabel('Coil diameter D (m)'), ylabel('Wire diameter d (m)'), ...
-   title('Figure 1     Spring stiffness and frequency optimization problem (w = 1.0)')
+   title('Reimplemented spring stiffness and frequency optimization problem (w = 1.0)')
 hold on
 contour(D,d,stiffness,[10000 10000],'g')
 contour(D,d,freq,[300 300],'r')
@@ -49,17 +49,20 @@ grid
 xq = [0.022  0.0035];
 
 % Initiation of optimization process:
-again = 1;
+max_iter = 50;
 cycle = 0
+prev_val = 100000;
+tol = 1e-6;
+
 D = xq(1)
 d = xq(2)
 
 % Loop over optimization cycle:
-while again >= 1,
+while cycle <= max_iter
    cycle = cycle +1
    % Plot marker in current design point:
    plot(xq(1),xq(2),'o');
-   
+
 	% Forward finite diffence gradients of objective function and constraints
 	hi=1e-8;
 	alpha=0.0;
@@ -75,7 +78,7 @@ while again >= 1,
 	 % Gradient vector:
   	df = [dfdx1 dfdx2]/ sqrt(dfdx1^2 + dfdx2^2);
 	% Steepest descent search direction:
-    scale_fac = 0.002;
+    scale_fac = 0.005;
 	sq = -df * scale_fac;
     sq
    
@@ -102,10 +105,17 @@ while again >= 1,
    % Update design point:
    xq = xnew;
    
-   % Continue optimization?
-   again = input('  Another optimization cycle? (0: No  1: Yes):')
-   if again == 0, return; end;
+   % Calc Tolerance
+    abs_diff = abs(prev_val - fval)
 
-end;  % end optimization cycle (while-loop)
+   % Break if tolerance is minimal
+    if abs_diff < tol
+        fprintf("Solution converged after %i iterations \n",cycle)
+        break
+    end
+
+    prev_val = fval;
+
+end  % end optimization cycle (while-loop)
 
 %end 
