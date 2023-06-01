@@ -13,6 +13,7 @@ x = [0.024 0.004];
 
 % Forward finite diffence gradients of objective function and constraints
 hx = logspace(-20,0,100); % vector of finite difference steps
+% hx = logspace(-6,0,5000); % vector of finite difference steps
 for i=1:1:length(hx)
 
   % Finite diffence step
@@ -50,5 +51,22 @@ xlabel('Difference step hx'), ylabel('dg1/dx1'), title('Length constraint')
 subplot(224)
 semilogx(hx,dgdx2(:,1)')
 xlabel('Difference step hx'), ylabel('dg1/dx2'), title('Length constraint') 
+
+% subplot(221)
+% plot(hx,dfdx1)
+% xlabel('Difference step hx'), ylabel('df/dx1'), title('Spring mass')
+% 
+% subplot(222)
+% plot(hx,dfdx2)
+% xlabel('Difference step hx'), ylabel('df/dx2'), title('Spring mass')
+% 
+% subplot(223)
+% plot(hx,dgdx1(:,1)')
+% xlabel('Difference step hx'), ylabel('dg1/dx1'), title('Length constraint') 
+% 
+% subplot(224)
+% plot(hx,dgdx2(:,1)')
+% xlabel('Difference step hx'), ylabel('dg1/dx2'), title('Length constraint') 
+
 
 
