@@ -12,7 +12,7 @@ clf, hold off, clear
 x = [0.024 0.004];  
 
 % Forward finite diffence gradients of objective function and constraints
-hx = logspace(-20,0,100); % vector of finite difference steps
+hx = logspace(-20,0,10000); % vector of finite difference steps
 % hx = logspace(-6,0,5000); % vector of finite difference steps
 for i=1:1:length(hx)
 
@@ -36,21 +36,29 @@ for i=1:1:length(hx)
 end
 
 % Plotting finite difference gradients
+% subplot(221)
+% semilogx(hx,dfdx1)
+% xlabel('Difference step hx'), ylabel('df/dx1'), title('Spring mass')
+% 
+% subplot(222)
+% semilogx(hx,dfdx2)
+% xlabel('Difference step hx'), ylabel('df/dx2'), title('Spring mass')
+
 subplot(221)
-semilogx(hx,dfdx1)
-xlabel('Difference step hx'), ylabel('df/dx1'), title('Spring mass')
+semilogx(hx,dgdx1(:,4)')
+xlabel('Difference step hx'), ylabel('dg4/dx1'), title('Scaled shear stress constraint') 
 
 subplot(222)
-semilogx(hx,dfdx2)
-xlabel('Difference step hx'), ylabel('df/dx2'), title('Spring mass')
+semilogx(hx,dgdx2(:,4)')
+xlabel('Difference step hx'), ylabel('dg4/dx2'), title('Scaled shear stress constraint')
 
 subplot(223)
-semilogx(hx,dgdx1(:,1)')
-xlabel('Difference step hx'), ylabel('dg1/dx1'), title('Length constraint') 
+semilogx(hx,dgdx1(:,5)')
+xlabel('Difference step hx'), ylabel('dg5/dx1'), title('Scaled frequency constraint') 
 
 subplot(224)
-semilogx(hx,dgdx2(:,1)')
-xlabel('Difference step hx'), ylabel('dg1/dx2'), title('Length constraint') 
+semilogx(hx,dgdx2(:,5)')
+xlabel('Difference step hx'), ylabel('dg5/dx2'), title('Scaled frequency constraint') 
 
 % subplot(221)
 % plot(hx,dfdx1)

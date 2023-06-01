@@ -41,4 +41,5 @@ g(4) = Tau2/Tau12max - 1;
 freq1lb = ncamfac * nm/2;
 g(5) = 1 - freq1/freq1lb;
 
+g(1)=str2double(num2str(g(1)));
 %end 
