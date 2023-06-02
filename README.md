@@ -24,7 +24,7 @@ Here's what we've implemented and finished so far for the exercises!
 | 2 | Study the behavior of model functions, and learn how to recognize monotonicity, (non-)convexity and (non-)linearity. Identify properties of optimization problems including dominance, activity, well boundedness, and convexity. | *Done* |
 | 3 | Understand the basic concept of line searches in more dimensional problems. Learn how to use MATLAB line search algorithm `fminbnd` and how to set optimization options. Investigate the influence of convergence parameters. | *Done*  |
 | 4 | Solution of an unconstrained problem by means of a self made steepest descent algorithm using the Matlab line search algorithm fminbnd. Visualization of the optimization process. Learn how to use MATLAB algorithm `fminunc` to solve unconstrained problems. | *Done* |
-| 5 | Investigate the influence of the step size on the accuracy of finite difference gradients. Understand the KKT conditions for constrained optimization. | ***In Progress*** |
+| 5 | Investigate the influence of the step size on the accuracy of finite difference gradients. Understand the KKT conditions for constrained optimization. | *Done* |
 | 6 | *To be filled* | Not started |
 | 7 | *To be filled* | Not started |
 | 8 | *To be filled* | Not started |
