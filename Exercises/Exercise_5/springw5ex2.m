@@ -19,8 +19,7 @@ x_g2_and_g1 = [0.02462 0.004035];
 % The intersection of constraints g4 and g1
 x_g4_and_g1 = [0.022251 0.004075];
 
-
-point = x_star;
+x_point = x_g4_and_g1;
 % Forward finite diffence gradients of objective function and constraints
 
 % Finite diffence step
@@ -28,31 +27,43 @@ hxi = 1e-8;
 
 
 % Setup RHS (objective gradient)
-fx = springobj1(point);
+fx = springobj1(x_point)
 
-fx1plush = springobj1([x(1)+hxi, x(2)]);
-fx2plush = springobj1([x(1), x(2)+hxi]);
+fx1plush = springobj1([x_point(1)+hxi, x_point(2)]);
+fx2plush = springobj1([x_point(1), x_point(2)+hxi]);
 
 dfdx1= (fx1plush - fx)/hxi;
 dfdx2= (fx2plush - fx)/hxi;
 
-grad_f = [dfdx1 dfdx2]';
+grad_f = [dfdx1 dfdx2]'
 
 
-% Setup RHS (constraint gradient collection)
+% Setup LHS (constraint gradient collection)
 
-gx = springcon1(point)
-inact_con = [1,2,5]
+%Specify g_3 as a dependent constraint, along with g_2
+dep_con = 3;
+
+% Remove dependent constraint
+gx = springcon1(x_point)
+gx(dep_con) = [];
+
+% Find inactive constraints, with numerical leeway
+inact_con = find(abs(gx) > 0.001)
 gx(inact_con) = [];
 
-gx1plush = springcon1([x(1)+hxi, x(2)]);
+
+gx1plush = springcon1([x_point(1)+hxi, x_point(2)]);
+gx1plush(dep_con) = [];
 gx1plush(inact_con) = [];
-gx2plush = springcon1([x(1), x(2)+hxi]);
+
+gx2plush = springcon1([x_point(1), x_point(2)+hxi]);
+gx2plush(dep_con) = [];
 gx2plush(inact_con) = [];
+
 dgdx1 = (gx1plush - gx)./hxi;
 dgdx2= (gx2plush - gx)./hxi;
 
-grad_g_vec = [dgdx1' dgdx2'];
+grad_g_vec = [dgdx1' dgdx2']
 
 sol = -grad_g_vec \ grad_f
 
