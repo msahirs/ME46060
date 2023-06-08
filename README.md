@@ -25,8 +25,8 @@ Here's what we've implemented and finished so far for the exercises!
 | 3 | Understand the basic concept of line searches in more dimensional problems. Learn how to use MATLAB line search algorithm `fminbnd` and how to set optimization options. Investigate the influence of convergence parameters. | *Done*  |
 | 4 | Solution of an unconstrained problem by means of a self made steepest descent algorithm using the Matlab line search algorithm fminbnd. Visualization of the optimization process. Learn how to use MATLAB algorithm `fminunc` to solve unconstrained problems. | *Done* |
 | 5 | Investigate the influence of the step size on the accuracy of finite difference gradients. Understand the KKT conditions for constrained optimization. | *Done* |
-| 6 | *To be filled* | Not started |
-| 7 | *To be filled* | Not started |
+| 6 | Use SQP `fmincon` to solve constrained optimization problem. | Not started |
+| 7 | • Linearization of constrained optimization problem. Solve such problems by sequential linear programming. Introduce move limits. | Not started |
 | 8 | *To be filled* | Not started |
 | 9 | *To be filled* | Not started |
 | 10 | *To be filled* | Not started |
