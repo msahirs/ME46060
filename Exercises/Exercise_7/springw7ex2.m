@@ -16,6 +16,8 @@ x0 = [ 0.0229133  0.0036344];
 D = [0.010:0.001:0.040];
 d = [0.002:0.0002:0.006];
 
+% linprog
+
 % Matrix of output values for combinations of design variables D and d: 
 for j=1:1:length(d)
   for i=1:1:length(D)
@@ -54,6 +56,18 @@ for j=1:1:length(d)
   end
 end
 
+x_lp = [0.035 0.0045];
+rhs = zeros(5,1);
+
+df = dfw7ex1(x_lp);
+dg = dgw7ex1(x_lp);
+
+
+l_bound = [0.01 0.002];
+u_bound = [0.04 0.006];
+
+lp_ans = linprog(df,dg, rhs, [], [], l_bound, u_bound)
+
 % Contour plot of real spring problem
 % contour(D, d, fobj)
 xlabel('Coil diameter D (m)'), ylabel('Wire diameter d (m)'), ...
@@ -77,7 +91,6 @@ grid
 
 % Plot marker in initial design point:
 plot(x0(1),x0(2),'o');
-x0=ginput(1)
 
 clear all
 

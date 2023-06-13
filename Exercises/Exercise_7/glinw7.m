@@ -12,7 +12,7 @@ D = x(1);
 d = x(2);
 
 % Constant parameter values
-springparam2;
+springparams2;
 
 % Nominal valve area:
 Av = Dv^2*pi/4;
