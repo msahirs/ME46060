@@ -5,7 +5,6 @@
 % Visualization of linearized spring mass optimization problem,
 % using flinw7.m (linearized objective function: spring mass) and
 % glinw7.m (linearized constraints).
-
 % Initialization
 clf, hold off
 format long
@@ -32,8 +31,9 @@ for j=1:1:length(d)
     % Linearized objective function
     flin = flinw7(x,x0);
     % Grid value of objective function:
-    flingrid(j,i) = flin; 
-    
+    flingrid(j,i) = flin;
+
+
     
     % Real constraints:
     g = springcon3(x);
@@ -57,16 +57,17 @@ for j=1:1:length(d)
 end
 
 x_lp = [0.035 0.0045];
-rhs = zeros(5,1);
+glin_q = glinw7(x_lp,x_lp);
+glin_q(2) = [];
 
 df = dfw7ex1(x_lp);
 dg = dgw7ex1(x_lp);
+dg(2,:) = [];
 
 
 l_bound = [0.01 0.002];
 u_bound = [0.04 0.006];
-
-lp_ans = linprog(df,dg, rhs, [], [], l_bound, u_bound)
+lp_ans = linprog(df,dg, glin_q, [], [])
 
 % Contour plot of real spring problem
 % contour(D, d, fobj)

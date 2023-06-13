@@ -27,9 +27,8 @@ Here's what we've implemented and finished so far for the exercises!
 | 5 | Investigate the influence of the step size on the accuracy of finite difference gradients. Understand the KKT conditions for constrained optimization. | *Done* |
 | 6 | Use SQP `fmincon` to solve constrained optimization problem. | *Done* |
 | 7 | Linearization of constrained optimization problem. Solve such problems by sequential linear programming. Introduce move limits. | ***In Progress*** |
-| 8 | *To be filled* | Not started |
+| 8 | *To be filled* | *Done* |
 | 9 | *To be filled* | Not started |
-| 10 | *To be filled* | Not started |
 
 ## Final Assignment
 
