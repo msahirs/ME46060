@@ -104,8 +104,8 @@ DOFCON[0,:] = 0
 DOFCON[1,:] = 0
 
 
-E=71.7e9
-A=0.0706
+E=71.7e9 * np.ones(len(bars))
+A=0.0706 * np.ones(len(bars))
 
 
 #%% Truss structural analysis
@@ -127,7 +127,7 @@ def TrussAnalysis():
         aux = DOF*bars[k,:]
         index = np.r_[aux[0]:aux[0]+DOF,aux[1]:aux[1]+DOF]
 
-        ES = np.dot(a[k][np.newaxis].T*E*A,a[k][np.newaxis])/L[k]
+        ES = np.dot(a[k][np.newaxis].T*E[k]*A[k],a[k][np.newaxis])/L[k]
         K[np.ix_(index,index)] += ES
 
     freeDOF = DOFCON.flatten().nonzero()[0]
