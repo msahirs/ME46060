@@ -53,8 +53,8 @@ bars = np.array(bars)
 P = np.zeros_like(nodes)
 
 #Create forces
-up_forces = 10e6
-lat_forces = 10e2
+up_forces = 10e5
+lat_forces = 10e3
 P[6:10,2] = up_forces
 P[6:10,0] = lat_forces
 
@@ -66,8 +66,8 @@ DOFCON[0,:] = 0
 DOFCON[1,:] = 0
 
 #Init arrays for rod properties
-E=71.7e9 * np.ones(len(bars))
-A=0.0706 * np.ones(len(bars))
+E=69e9 * np.ones(len(bars))
+A=0.0406 * np.ones(len(bars))
 
 #Solve
 lander_output = Truss(nodes,bars,P,E,A,DOFCON)
@@ -90,6 +90,7 @@ plot_(lander_output.get_deformed_nodes(), lander_output.bars,
 #Show Plot
 plt.show()
 
+lander_output.pprint()
 
 # # Used for time benchmarking
 # import time; counts = 1000
