@@ -1,0 +1,107 @@
+from utils.truss_obj import Truss
+import numpy as np
+from utils.plotting import plot_
+import matplotlib.pyplot as plt
+
+#Init structure arrays
+nodes = []
+bars = []
+
+#Add nodes
+nodes.append([-1.03,0, 5.5])
+nodes.append([1.03,0, 5.5])
+nodes.append([-1.03,1.03,2.75])
+nodes.append([1.03,1.03,2.75])
+nodes.append([1.03,- 1.03,2.75])
+nodes.append([-1.03, -1.03,2.75])
+nodes.append([-2.75, 2.75, 0])
+nodes.append([2.75,2.75,0])
+nodes.append([2.75, -2.75,0])
+nodes.append ([-2.75, -2.75,0])
+
+
+#create links
+bars.append([0,1])
+bars.append([3,0])
+bars.append([2,1])
+bars.append([4,0])
+bars.append([5,1])
+bars.append([3,1])
+bars.append([4,1])
+bars.append([2,0])
+bars.append([5,0])
+bars.append([5,2])
+bars.append([4,3])
+bars.append([2,3])
+bars.append([5,4])
+bars.append([9,2])
+bars.append([6,5])
+bars.append([8,3])
+bars.append([7,4])
+bars.append([6,3])
+bars.append([7,2])
+bars.append([9,4])
+bars.append([8,5])
+bars.append([9,5])
+bars.append([6,2])
+bars.append([7,3])
+bars.append([8,4])
+
+#Make them numpy
+nodes = np.array(nodes).astype(float)
+bars = np.array(bars)
+P = np.zeros_like(nodes)
+
+#Create forces
+up_forces = 10e6
+lat_forces = 10e2
+P[6:10,2] = up_forces
+P[6:10,0] = lat_forces
+
+#Create degree of freedom array
+DOFCON = np.ones_like(nodes).astype(int)
+
+# Set top nodes
+DOFCON[0,:] = 0
+DOFCON[1,:] = 0
+
+#Init arrays for rod properties
+E=71.7e9 * np.ones(len(bars))
+A=0.0706 * np.ones(len(bars))
+
+#Solve
+lander_output = Truss(nodes,bars,P,E,A,DOFCON)
+
+#Init Plot
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+#Plot undeformed
+plot_(lander_output.nodes, lander_output.bars,
+      'gray', '--',1, 'Undeformed', ax,
+      force_vec= True, P=lander_output.forces,
+      arrow_scale = 3, text_offset = 0.2,)
+
+#Plot deformed
+plot_(lander_output.get_deformed_nodes(), lander_output.bars,
+      'blue', '-',1, 'Deformed', ax,
+      force_vec= False, node_num = False)
+
+#Show Plot
+plt.show()
+
+
+# # Used for time benchmarking
+# import time; counts = 1000
+
+# start = time.time()
+
+# for i in range(counts):
+#     lander_output = Truss(nodes,bars,P,E,A,DOFCON)
+
+# end = time.time()
+# diff = end-start
+
+# print(f"Total time taken for {counts} iterations: {diff}")
+# print(f"In {counts} iterations, average of {diff/counts} per iteration")
+

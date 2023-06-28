@@ -1,7 +1,6 @@
 import numpy as np
 
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.patches import FancyArrowPatch
 from mpl_toolkits.mplot3d import proj3d
 
@@ -32,16 +31,16 @@ nodes = []
 bars = []
 
 # SETUP! Will move to separate input file at some point
-nodes.append([-37.5,0, 200])
-nodes.append([37.5,0, 200])
-nodes.append([-37.5,37.5,100])
-nodes.append([37.5,37.5,100])
-nodes.append([37.5,- 37.5,100])
-nodes.append([-37.5, -37.5,100])
-nodes.append([-100, 100, 0])
-nodes.append([100,100,0])
-nodes.append([100, -100,0])
-nodes.append ([-100, -100,0])
+nodes.append([-1.03,0, 5.5])
+nodes.append([1.03,0, 5.5])
+nodes.append([-1.03,1.03,2.75])
+nodes.append([1.03,1.03,2.75])
+nodes.append([1.03,- 1.03,2.75])
+nodes.append([-1.03, -1.03,2.75])
+nodes.append([-2.75, 2.75, 0])
+nodes.append([2.75,2.75,0])
+nodes.append([2.75, -2.75,0])
+nodes.append ([-2.75, -2.75,0])
 
 bars.append([0,1])
 bars.append([3,0])
@@ -74,33 +73,38 @@ bars = np.array(bars)
 
 P = np.zeros_like(nodes)
 
-P[0,0] = 1
-P[0,1] = -30
-P[0,2] = -30
+# P[0,0] = 1
+# P[0,1] = -30
+# P[0,2] = -30
 
-P[1,1] = -10 
-P[1,2] = -10 
+# P[1,1] = -10 
+# P[1,2] = -10 
 
-P[2,0] = 0.5
-P[5,0] = 0.6
+# P[2,0] = 0.5
+# P[5,0] = 0.6
+
+landing_upward = 10e7
+landing_side = 0
+P[6:10,2] = landing_upward
+P[6:10,0] = landing_side
 
 
-#Support types. 0 = fixed, 1 = pinned.
-# list of size DIM * support nodes
-Ur = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+
+# FOrced Displacement
+# list of size DIM * No. support nodes
+Ur = np.zeros(6)
 
 
 DOFCON = np.ones_like(nodes).astype(int)
 
 # Degrees of freedom setting
-DOFCON[6,:] = 0
-DOFCON[7,:] = 0
-DOFCON[8,:] = 0
-DOFCON[9,:] = 0
+DOFCON[0,:] = 0
+DOFCON[1,:] = 0
 
 
-E=1e4
-A=0.111
+E=71.7e9 * np.ones(len(bars))
+A=0.0706 * np.ones(len(bars))
 
 
 #%% Truss structural analysis
@@ -122,8 +126,8 @@ def TrussAnalysis():
         aux = DOF*bars[k,:]
         index = np.r_[aux[0]:aux[0]+DOF,aux[1]:aux[1]+DOF]
 
-        ES = np.dot(a[k][np.newaxis].T*E*A,a[k][np.newaxis])/L[k]
-        K[np.ix_(index,index)] = K[np.ix_(index,index)] + ES
+        ES = np.dot(a[k][np.newaxis].T*E[k]*A[k],a[k][np.newaxis])/L[k]
+        K[np.ix_(index,index)] += ES
 
     freeDOF = DOFCON.flatten().nonzero()[0]
     supportDOF = (DOFCON.flatten() == 0).nonzero()[0]
@@ -135,9 +139,10 @@ def TrussAnalysis():
 
     Krr = K[np.ix_(supportDOF, supportDOF)]
     Pf = P.flatten()[freeDOF]
+    
 
     Uf = np.linalg.solve(Kff,Pf)
-
+    
     # print("EigenValues:")
     # print(np.linalg.eig(Kff)[0]**0.5)
 
@@ -145,27 +150,26 @@ def TrussAnalysis():
     U[freeDOF] = Uf
 
     U[supportDOF] = Ur
-
     U = U.reshape(NN,DOF)
     u = np.concatenate((U[bars[:,0]], U[bars[:,1]]), axis = 1)
 
     N = E*A/L*(a*u).sum(axis = 1)
 
     R = (Krf*Uf).sum(axis = 1) + (Krr*Ur).sum(axis = 1)
-    R = R.reshape(4,DOF)
+    R = R.reshape(2,DOF)
 
     return np.array(N), np.array(R), U
 
 def plot_(nodes, c, lt, lw, lg, ax, force_vec = False):
 
-    arrow_scale = 50
-    text_offset = 4
+    arrow_scale = 3
+    text_offset = 0.2
     for i in range(nodes.shape[0]):
 
-        # ax.text(*nodes[i], f"{i}, {lg[0]}", color='red')
+        ax.text(*nodes[i], f"{i}, {lg[0]}", color='red')
 
-        if force_vec is True and np.abs(np.sum(P[i],axis = 0)) > 1e-5:
-            print(i)
+        if force_vec and np.abs(np.sum(P[i],axis = 0)) > 1e-5:
+            # print(i)
             scaled_P = P[i]/np.linalg.norm(P[i])
             # raise "error"  
             x_a = Arrow3D([nodes[i,0], scaled_P[0]*arrow_scale + nodes[i,0]],
@@ -210,12 +214,26 @@ def plot_(nodes, c, lt, lw, lg, ax, force_vec = False):
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
+
+import time
+counts = 1000
+
+start = time.time()
+# for i in range(counts):
 N, R, U = TrussAnalysis()
+
+end = time.time()
+diff = end-start
+
+print(f"Total time taken for {counts} iterations: {diff}")
+print(f"In {counts} iterations, average of {diff/counts} per iteration")
 
 print('Axial Forces (positive = tension, negative = compression)')
 # print(N[np.newaxis].T)
+
 print('Reaction Forces (positive = upward, negative = downward')
 # print(R)
+
 print('Deformation at nodes')
 # print(U)
 
