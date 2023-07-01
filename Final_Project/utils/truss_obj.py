@@ -1,13 +1,18 @@
 import numpy as np
-from matplotlib import pyplot as plt
+
 from pathlib import Path
+
+
 parent_dir = Path(__file__).parent.resolve()
 
+
+# CONSTANTS
 DOF = 3
 
 class Truss():
 
-    def __init__(self,nodes,bars, forces, E, A, BCs, rho = np.array([2710])) -> None:
+    def __init__(self,nodes,bars, forces, E, A, BCs,
+                 rho = np.array([2710])) -> None:
 
         self.nodes = nodes
         self.bars = bars
