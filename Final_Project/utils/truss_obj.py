@@ -1,30 +1,6 @@
 import numpy as np
-from scipy import linalg
-
-
-def lu_dec_solver_v1(A,b):
-    return np.linalg.inv(A) @ b
-
-def lu_dec_solver_v2(A,b):
-    L, U  = linalg.lu(A,True)
-    L_inv = np.linalg.inv(L)
-    U_inv = np.linalg.inv(U)
-    return U_inv @ (L_inv @ b)
-
-def lu_dec_solver_v3(A,b):
-    U = A.copy()
-    L = np.identity(len(A))
-    for n in range(0,len(A)-1):
-        for m in range(n+1,len(A)):
-            L[m,n]  = U[m,n]/U[n,n]
-            U[m,:] += -L[m,n]*U[n,:]
-    L_inv = np.linalg.inv(L)
-    U_inv = np.linalg.inv(U)
-    return U_inv @ (L_inv @ b)
 
 from pathlib import Path
-
-
 parent_dir = Path(__file__).parent.resolve()
 
 
@@ -34,7 +10,8 @@ DOF = 3
 class Truss():
 
     def __init__(self,nodes,bars, forces, E, A, BCs,
-                 rho = np.array([2710])) -> None:
+                 rho = 2710,
+                 fail_stress = 110e6) -> None:
 
         self.nodes = nodes
         self.bars = bars
@@ -43,6 +20,7 @@ class Truss():
         self.A = A
         self.BCs = BCs
         self.rho = rho
+        self.fail_stress = fail_stress
 
         self.axial_loads = np.array([])
         self.reac_loads = np.array([])
@@ -73,7 +51,7 @@ class Truss():
             aux = DOF*self.bars[k,:]
             index = np.r_[aux[0]:aux[0]+DOF,aux[1]:aux[1]+DOF]
 
-            ES = np.dot(a[k][np.newaxis].T*self.E[k]*self.A[k],a[k][np.newaxis])/L[k]
+            ES = np.dot(a[k][np.newaxis].T*self.E[k]*self.A[k],  a[k][np.newaxis])/L[k]
             K[np.ix_(index,index)] += ES
 
         freeDOF = self.BCs.flatten().nonzero()[0]

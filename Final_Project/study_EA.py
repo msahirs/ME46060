@@ -7,17 +7,24 @@ import matplotlib.pyplot as plt
 nodes = []
 bars = []
 
+up_sq = 1.03
+mid_sq = 1.03
+low_sq = 2.5
+height = 5.5
+mid_h = 2.75
+
+
 #Add nodes
-nodes.append([-1.03,0, 5.5])
-nodes.append([1.03,0, 5.5])
-nodes.append([-1.03,1.03,2.75])
-nodes.append([1.03,1.03,2.75])
-nodes.append([1.03,- 1.03,2.75])
-nodes.append([-1.03, -1.03,2.75])
-nodes.append([-2.75, 2.75, 0])
-nodes.append([2.75,2.75,0])
-nodes.append([2.75, -2.75,0])
-nodes.append ([-2.75, -2.75,0])
+nodes.append([-up_sq,0, height])
+nodes.append([up_sq,0, height])
+nodes.append([-mid_sq,mid_sq,mid_h])
+nodes.append([mid_sq,mid_sq,mid_h])
+nodes.append([mid_sq,-mid_sq,mid_h])
+nodes.append([-mid_sq, -mid_sq,mid_h])
+nodes.append([-low_sq, low_sq, 0])
+nodes.append([low_sq,low_sq,0])
+nodes.append([low_sq, -low_sq,0])
+nodes.append ([-low_sq, -low_sq,0])
 
 
 #create links
@@ -47,6 +54,12 @@ bars.append([6,2])
 bars.append([7,3])
 bars.append([8,4])
 
+bars.append([1,8])
+bars.append([1,7])
+
+bars.append([0,6])
+bars.append([0,9])
+
 #Make them numpy
 nodes = np.array(nodes).astype(float)
 bars = np.array(bars)
@@ -62,8 +75,10 @@ P[6:10,0] = lat_forces
 DOFCON = np.ones_like(nodes).astype(int)
 
 # Set top nodes
-DOFCON[0,:] = 0
-DOFCON[1,:] = 0
+DOFCON[2,:] = 0
+DOFCON[3,:] = 0
+DOFCON[4,:] = 0
+DOFCON[5,:] = 0
 
 #Init arrays for rod properties
 E = 69e9 * np.ones(len(bars))
@@ -72,7 +87,7 @@ A = 0.0406 * np.ones(len(bars))
 # #Solve
 lander_output = Truss(nodes,bars,P,E,A,DOFCON)
 
-A_range = np.linspace(0.01,0.5,10)
+A_range = np.linspace(0.01,0.5,1000)
 
 
 max_def = []
@@ -92,7 +107,7 @@ for i in range(A_range.size):
             deform_val = np.abs(lander_output.get_deformed_nodes() - lander_output.nodes)
             deform_val = np.sqrt((deform_val**2).sum(axis=1))
             
-            max_def.append(deform_val[-1])
+            max_def.append(np.max(deform_val))
 
             mass.append(lander_output.get_tot_mass())
             axial_stiff.append(lander_output.get_axial_stress()[-1])
@@ -108,11 +123,11 @@ print("Number of Skipped values: ", no_exceptions)
 
 
 
-plt.plot(A_used,max_def,'-', linewidth = 0.75)
+plt.plot(A_used,max_def,'-', linewidth = 1)
 plt.show()
-plt.plot(A_used,mass,'-', linewidth = 0.75)
+plt.plot(A_used,mass,'-', linewidth = 1)
 plt.show()
-plt.plot(A_used,axial_stiff,'-', linewidth = 0.75)
+plt.plot(A_used,axial_stiff,'-', linewidth = 1)
 plt.show()
 # print(max_def)
 
