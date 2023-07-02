@@ -2,9 +2,9 @@ from utils.truss_obj import Truss
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.optimize as scop
+from utils.plotting import plot_
 
 #Init structure arrays
-
 bars = []
 
 #create links
@@ -57,23 +57,24 @@ mid_h = 2.75
 # #Solve
 # lander_output = Truss(nodes,bars,P,E,A,DOFCON)
 
-L1_range = np.linspace(0.1,5,1000)
-
 up_forces = 10e5
 lat_forces = 10e2
 
-
 no_exceptions = 0
 
+obj_history = []
+masses = []
+
 def opt_call_func(x):
+    # fig.clf()
 
     penalty = 0
 
     for i in x[:3]:
-        if i < 0.5: penalty+=1000
+        if i < 1 or i > 2.5: penalty+=5000
 
     for i in x[3:]:
-        if 2>i or i>3: penalty+=1000
+        if i<2 or i>3: penalty+=5000
 
     nodes = []
       
@@ -83,7 +84,6 @@ def opt_call_func(x):
     height = x[3]
     mid_h = x[4]
     
-
     #Add nodes
     nodes.append([-up_sq,0, height+mid_h])
     nodes.append([up_sq,0, height+mid_h])
@@ -112,38 +112,90 @@ def opt_call_func(x):
     DOFCON[5,:] = 0
 
     lander_output = Truss(nodes,bars,P,E,A,DOFCON)
-
-
     
     deform_val = np.abs(lander_output.get_deformed_nodes() - lander_output.nodes)
     deform_val = np.sqrt((deform_val**2).sum(axis=1))
-    
     max_def = np.max(deform_val)
+    
     mass = lander_output.get_tot_mass()
     axial_stress = np.max(np.abs(lander_output.get_axial_stress()))/lander_output.fail_stress
-    
+    masses.append(mass)
     buck_crit_i = np.argmin(lander_output.get_axial_stress())
     b_val = lander_output.get_axial_stress()/lander_output.get_crit_buckling_stress()
     buck_stress = b_val[buck_crit_i]
 
-    return max_def + penalty
+    if plot_visuals:
+
+        ax.set_xlim(-3,3)
+        ax.set_ylim(-3,3)
+        ax.set_zlim(0,5)
+
+        plot_(nodes, bars,
+            'gray', '-',2, 'Undeformed', ax,
+            force_vec= False, P=0,
+            arrow_scale = 3, text_offset = 0.2,)
+        # fig.canvas.draw()
+        plt.pause(5e-3)
+
+        ax.cla()
+    
+    obj_history.append(max_def + penalty + mass)
+
+    return max_def*30e5 + penalty + mass
     # plt.show()
 
+plot_visuals = True
 
-a = scop.minimize(opt_call_func, [1,1,1,2.5,2.5], method='Nelder-Mead', tol=1e-6)
+if plot_visuals:
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    plt.ion()
+
+a = scop.minimize(opt_call_func, [1.1,1.1,1.1,2.5,2.5], method='Nelder-Mead', tol=1e-5)
+
 
 print(a)
+
 # print("Number of exceptions raised: ", no_exceptions)
+plt.clf()
+
+plt.plot(range(a.nfev),obj_history)
+plt.show()
+
+plt.plot(range(a.nfev),masses)
+plt.show()
 
 
-# fig = plt.figure()
-# ax = fig.add_subplot(111, projection='3d')    
+low_sq = a.x[0]
+mid_sq = a.x[1]
+up_sq = a.x[2]
+height = a.x[3]
+mid_h = a.x[4]
 
-# plot_(lander_output.nodes, lander_output.bars,
-#       'gray', '-',1, 'Undeformed', ax,
-#       force_vec= True, P=lander_output.forces,
-#       arrow_scale = 3, text_offset = 0.2,)
-# plt.show()
+nodes=[]
+#Add nodes
+nodes.append([-up_sq,0, height+mid_h])
+nodes.append([up_sq,0, height+mid_h])
+nodes.append([-mid_sq,mid_sq,mid_h])
+nodes.append([mid_sq,mid_sq,mid_h])
+nodes.append([mid_sq,-mid_sq,mid_h])
+nodes.append([-mid_sq, -mid_sq,mid_h])
+nodes.append([-low_sq, low_sq, 0])
+nodes.append([low_sq,low_sq,0])
+nodes.append([low_sq, -low_sq,0])
+nodes.append([-low_sq, -low_sq,0])
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+nodes = np.array(nodes).astype(float)  
+
+plot_(nodes, bars,
+      'gray', '-',1, 'Undeformed', ax,
+      force_vec= False, P=0,
+      arrow_scale = 3, text_offset = 0.2,)
+
+plt.show()
 
 # plt.plot(L1_used,max_def,'-')
 

@@ -10,13 +10,13 @@ bars = []
 up_sq = 1.03
 mid_sq = 1.03
 low_sq = 2.5
-height = 5.5
+height = 2.75
 mid_h = 2.75
 
 
 #Add nodes
-nodes.append([-up_sq,0, height])
-nodes.append([up_sq,0, height])
+nodes.append([-up_sq,0, height+mid_h])
+nodes.append([up_sq,0, height+mid_h])
 nodes.append([-mid_sq,mid_sq,mid_h])
 nodes.append([mid_sq,mid_sq,mid_h])
 nodes.append([mid_sq,-mid_sq,mid_h])
@@ -24,8 +24,7 @@ nodes.append([-mid_sq, -mid_sq,mid_h])
 nodes.append([-low_sq, low_sq, 0])
 nodes.append([low_sq,low_sq,0])
 nodes.append([low_sq, -low_sq,0])
-nodes.append ([-low_sq, -low_sq,0])
-
+nodes.append([-low_sq, -low_sq,0])
 
 #create links
 bars.append([0,1])
@@ -66,8 +65,8 @@ bars = np.array(bars)
 P = np.zeros_like(nodes)
 
 #Create forces
-up_forces = 10e2
-lat_forces = 10e1
+up_forces = 10e5
+lat_forces = 10e2
 P[6:10,2] = up_forces
 P[6:10,0] = lat_forces
 
@@ -82,12 +81,12 @@ DOFCON[5,:] = 0
 
 #Init arrays for rod properties
 E = 69e9 * np.ones(len(bars))
-A = 0.0406 * np.ones(len(bars))
+A = 0.0206 * np.ones(len(bars))
 
 # #Solve
 lander_output = Truss(nodes,bars,P,E,A,DOFCON)
 
-A_range = np.linspace(0.01,0.5,1000)
+A_range = np.linspace(0.01,0.5,1)
 
 
 max_def = []
@@ -98,48 +97,40 @@ no_exceptions = 0
 
 for i in range(A_range.size):
       
-      try:
-    
-            A = A_range[i] * np.ones(len(bars))
-            A_used.append(A_range[i])
-            lander_output = Truss(nodes,bars,P,E,A,DOFCON)
-            
-            deform_val = np.abs(lander_output.get_deformed_nodes() - lander_output.nodes)
-            deform_val = np.sqrt((deform_val**2).sum(axis=1))
-            
-            max_def.append(np.max(deform_val))
 
-            mass.append(lander_output.get_tot_mass())
-            axial_stiff.append(lander_output.get_axial_stress()[-1])
+      A = A_range[i] * np.ones(len(bars))
+      A_used.append(A_range[i])
+      lander_output = Truss(nodes,bars,P,E,A,DOFCON)
+      
+      deform_val = np.abs(lander_output.get_deformed_nodes() - lander_output.nodes)
+      deform_val = np.sqrt((deform_val**2).sum(axis=1))
+      
+      max_def.append(np.max(deform_val))
 
-      except:
-            print(f"Warning! Exception raised for A = {A_range[i]}.\nSkipping area value...\n")
-            A_used.pop()
-            no_exceptions+=1
-            continue
+      mass.append(lander_output.get_tot_mass())
+      axial_stiff.append(lander_output.get_axial_stress()[-1])
+
 print("Number of Skipped values: ", no_exceptions)
 
-
-
-
-
-plt.plot(A_used,max_def,'-', linewidth = 1)
-plt.show()
-plt.plot(A_used,mass,'-', linewidth = 1)
-plt.show()
-plt.plot(A_used,axial_stiff,'-', linewidth = 1)
-plt.show()
+# plt.plot(A_used,max_def,'-', linewidth = 1)
+# plt.show()
+# plt.plot(A_used,mass,'-', linewidth = 1)
+# plt.show()
+# plt.plot(A_used,axial_stiff,'-', linewidth = 1)
+# plt.show()
 # print(max_def)
 
-# #Init Plot
-# fig = plt.figure()
-# ax = fig.add_subplot(111, projection='3d')
+#Init Plot
+fig = plt.figure(figsize = (7,5))
+ax = fig.add_subplot(111, projection='3d')
 
-# #Plot undeformed
-# plot_(lander_output.nodes, lander_output.bars,
-#       'gray', '--',1, 'Undeformed', ax,
-#       force_vec= True, P=lander_output.forces,
-#       arrow_scale = 3, text_offset = 0.2,)
+#Plot undeformed
+plot_(lander_output.nodes, lander_output.bars,
+      'gray', '-',2, 'Undeformed', ax,
+      force_vec= False, P=lander_output.forces,
+      arrow_scale = 3, text_offset = 0.2,)
+plt.tight_layout()
+plt.show()
 
 # #Plot deformed
 # plot_(lander_output.get_deformed_nodes(), lander_output.bars,

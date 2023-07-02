@@ -48,15 +48,16 @@ bars = np.array(bars)
 
 #Init arrays for rod properties
 E = 69e9* np.ones(len(bars))
-A = 0.0806 * np.ones(len(bars))
+A = 0.0406 * np.ones(len(bars))
 
 # #Solve
 # lander_output = Truss(nodes,bars,P,E,A,DOFCON)
 
-L1_range = np.linspace(0.1,5,1000)
+L1_range = np.linspace(1,3,2000)
 
-up_forces = 10e5
-lat_forces = 10e2
+up_forces = 50e4
+lat_forces = 30e2
+sf = 2
 
 max_def = []
 L1_used = []
@@ -72,8 +73,8 @@ for i in range(L1_range.size):
       nodes = []
       
       up_sq = 1.03
-      mid_sq = 1.03
-      low_sq = L1_range[i]
+      mid_sq = L1_range[i]
+      low_sq = 1.03
       height = 2.75
       mid_h = 2.75
 
@@ -106,20 +107,17 @@ for i in range(L1_range.size):
       DOFCON[5,:] = 0
 
       lander_output = Truss(nodes,bars,P,E,A,DOFCON)
-
-
       
       deform_val = np.abs(lander_output.get_deformed_nodes() - lander_output.nodes)
       deform_val = np.sqrt((deform_val**2).sum(axis=1))
-      
       max_def.append(np.max(deform_val))
+
       mass.append(lander_output.get_tot_mass())
-      axial_stress.append(np.max(np.abs(lander_output.get_axial_stress()))/lander_output.fail_stress)
+      axial_stress.append(np.max(np.abs(lander_output.get_axial_stress()) * sf)/lander_output.fail_stress)
       
       buck_crit_i = np.argmin(lander_output.get_axial_stress())
       b_val = lander_output.get_axial_stress()/lander_output.get_crit_buckling_stress()
-      buck_stress.append(b_val[buck_crit_i])
-      # plt.show()
+      buck_stress.append(b_val[buck_crit_i] * sf)
 
 
 print("Number of exceptions raised: ", no_exceptions)
@@ -128,21 +126,31 @@ print("Number of exceptions raised: ", no_exceptions)
 # ax = fig.add_subplot(111, projection='3d')    
 
 # plot_(lander_output.nodes, lander_output.bars,
-#       'gray', '-',1, 'Undeformed', ax,
-#       force_vec= True, P=lander_output.forces,
+#       'gray', '-',2, 'Undeformed', ax,
+#       force_vec= False, P=lander_output.forces,
 #       arrow_scale = 3, text_offset = 0.2,)
 # plt.show()
 
+plt.xlabel(r"$L_2$ used [m]")
+plt.ylabel(r"Maximum deformation [m]")
 plt.plot(L1_used,max_def,'-')
-
+plt.tight_layout()
 plt.show()
 
+plt.xlabel(r"$L_2$ used [m]")
+plt.ylabel(r"Mass [kg]")
 plt.plot(L1_used,mass)
+plt.tight_layout()
 plt.show()
-plt.plot(L1_used,axial_stress,label = "material failure factor")
-plt.plot(L1_used,np.abs(buck_stress), label = "buckling factor")
+
+plt.xlabel(r"$L_2$ used [m]")
+plt.ylabel(r"Stress Factor (inc. SF = 2) [-]")
+plt.plot(L1_used,axial_stress,label = f"Material Yield ($\sigma_y = {lander_output.fail_stress:.3} Pa$)")
+plt.plot(L1_used,np.abs(buck_stress), label = " Column Buckling")
 plt.legend()
+plt.tight_layout()
 plt.show()
+
 # print(max_def)
 
 # #Init Plot

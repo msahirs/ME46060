@@ -67,8 +67,8 @@ bars = np.array(bars)
 P = np.zeros_like(nodes)
 
 #Create forces
-up_forces = 10e7
-lat_forces = 10e1
+up_forces = 10e5
+lat_forces = 10e2
 P[6:10,2] = up_forces
 P[6:10,0] = lat_forces
 

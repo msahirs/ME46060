@@ -120,8 +120,6 @@ class Truss():
         print(self.deformation)
 
 
-
-
 def main():
     print("NOTE: Running as script!")
 
