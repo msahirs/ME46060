@@ -89,8 +89,6 @@ P[6:10,2] = landing_upward
 P[6:10,0] = landing_side
 
 
-
-
 # FOrced Displacement
 # list of size DIM * No. support nodes
 Ur = np.zeros(6)

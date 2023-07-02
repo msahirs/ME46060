@@ -4,20 +4,11 @@ from utils.plotting import plot_
 import matplotlib.pyplot as plt
 
 #Init structure arrays
-nodes = []
+
 bars = []
 
 #Add nodes
-nodes.append([-1.03,0, 5.5])
-nodes.append([1.03,0, 5.5])
-nodes.append([-1.03,1.03,2.75])
-nodes.append([1.03,1.03,2.75])
-nodes.append([1.03,- 1.03,2.75])
-nodes.append([-1.03, -1.03,2.75])
-nodes.append([-2.75, 2.75, 0])
-nodes.append([2.75,2.75,0])
-nodes.append([2.75, -2.75,0])
-nodes.append ([-2.75, -2.75,0])
+
 
 
 #create links
@@ -48,69 +39,96 @@ bars.append([7,3])
 bars.append([8,4])
 
 #Make them numpy
-nodes = np.array(nodes).astype(float)
+
 bars = np.array(bars)
-P = np.zeros_like(nodes)
-
-#Create forces
-up_forces = 10e1
-lat_forces = 10e4
-P[6:10,2] = up_forces
-P[6:10,0] = lat_forces
-
-#Create degree of freedom array
-DOFCON = np.ones_like(nodes).astype(int)
-
-# Set top nodes
-DOFCON[0,:] = 0
-DOFCON[1,:] = 0
 
 #Init arrays for rod properties
-E = 69e9 * np.ones(len(bars))
+E = 69e1 * np.ones(len(bars))
 A = 0.0406 * np.ones(len(bars))
 
 # #Solve
 # lander_output = Truss(nodes,bars,P,E,A,DOFCON)
 
-A_range = np.linspace(0.005,0.3,100)
+L1_range = np.linspace(0.05,1,100)
 
 max_def = []
-A_used = []
+L1_used = []
 mass = []
-axial_stiff = []
+axial_stress = []
 no_exceptions = 0
-for i in range(A_range.size):
+for i in range(L1_range.size):
       
       try:
-        
-    
-            A = A_range[i] * np.ones(len(bars))
-            A_used.append(A_range[i])
+      
+            nodes = []
+            
+            L1 = L1_range[i]
+            L1_used.append(L1_range[i])
+
+            nodes.append([-1.03,0, 5.5])
+            nodes.append([1.03,0, 5.5])
+            nodes.append([-L1,L1,2.75])
+            nodes.append([L1,L1,2.75])
+            nodes.append([L1,-L1,2.75])
+            nodes.append([-L1, -L1,2.75])
+            nodes.append([-2.75, 2.75, 0])
+            nodes.append([2.75,2.75,0])
+            nodes.append([2.75, -2.75,0])
+            nodes.append ([-2.75, -2.75,0])
+
+            nodes = np.array(nodes).astype(float)
+            P = np.zeros_like(nodes)
+            
+            #Create forces
+            up_forces = 10e1
+            lat_forces = 10e4
+            P[6:10,2] = up_forces
+            P[6:10,0] = lat_forces
+
+            #Create degree of freedom array
+            DOFCON = np.ones_like(nodes).astype(int)
+            # Set top nodes
+            DOFCON[0,:] = 0
+            DOFCON[1,:] = 0
+
             lander_output = Truss(nodes,bars,P,E,A,DOFCON)
+
+
+            
             deform_val = np.abs(lander_output.get_deformed_nodes() - lander_output.nodes)
             deform_val = np.sqrt((deform_val**2).sum(axis=1))
             
             max_def.append(deform_val[6])
             mass.append(lander_output.get_tot_mass())
-            axial_stiff.append(lander_output.get_axial_stress()[-1])
+            axial_stress.append(lander_output.get_axial_stress()[-1])
+            # plt.show()
 
       except:
-            print(f"Warning! Exception raised for A = {A_range[i]}.\nSkipping area value...\n")
-            A_used.pop()
+            print(f"Warning! Exception raised for L1 = {L1_range[i]}.\nSkipping area value...\n")
+            L1_used.pop()
             no_exceptions+=1
             continue
+
 print("Number of Skipped values: ", no_exceptions)
 
 
 
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')    
 
-
-plt.plot(A_used,max_def,'-o')
+plot_(lander_output.nodes, lander_output.bars,
+      'gray', '--',1, 'Undeformed', ax,
+      force_vec= True, P=lander_output.forces,
+      arrow_scale = 3, text_offset = 0.2,)
 plt.show()
-# plt.plot(A_used,mass)
-# plt.show()
-# plt.plot(A_used,axial_stiff)
-# plt.show()
+
+plt.plot(L1_used,max_def,'-o')
+plt.show()
+
+plt.plot(L1_used,mass)
+plt.show()
+plt.plot(L1_used,axial_stress)
+plt.show()
 # print(max_def)
 
 # #Init Plot

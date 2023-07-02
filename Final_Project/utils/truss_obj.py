@@ -1,4 +1,26 @@
 import numpy as np
+from scipy import linalg
+
+
+def lu_dec_solver_v1(A,b):
+    return np.linalg.inv(A) @ b
+
+def lu_dec_solver_v2(A,b):
+    L, U  = linalg.lu(A,True)
+    L_inv = np.linalg.inv(L)
+    U_inv = np.linalg.inv(U)
+    return U_inv @ (L_inv @ b)
+
+def lu_dec_solver_v3(A,b):
+    U = A.copy()
+    L = np.identity(len(A))
+    for n in range(0,len(A)-1):
+        for m in range(n+1,len(A)):
+            L[m,n]  = U[m,n]/U[n,n]
+            U[m,:] += -L[m,n]*U[n,:]
+    L_inv = np.linalg.inv(L)
+    U_inv = np.linalg.inv(U)
+    return U_inv @ (L_inv @ b)
 
 from pathlib import Path
 
@@ -67,6 +89,8 @@ class Truss():
         if evaluate_eigs:
             self.n_freqs = np.linalg.eigvals(Kff)
 
+
+        # Pf = sps.csr_matrix(Pf)
         Uf = np.linalg.solve(Kff,Pf)
 
         # print("EigenValues:")
